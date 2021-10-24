@@ -1,0 +1,56 @@
+﻿20-oct2021 started this  queue n order to queue some basic user-centered design ideas
+
+
+the app, at least at the first versions, doesnt feature a menu bar 
+so ther're alot to stuff in the screen
+
+when the suer opens the app the main view s supposed to maintain the state of what tabs are opened and whch one is active
+
+
+the main window is a tabs view, one special sticky tab shows the HomeView, when the others render classViews and are closable/openable
+
+the tabs are horizontal: the classes would pear like chrome tabs,
+this design choice must be a matter of layout and can easily changed on latr version if needed
+
+when the only opened tab is the special Home tab, the tabs headers part should be collapsed, 
+and the view should not be recognized as a tabbed view, to give it a clean and simple look especially 
+that's it's what new users see first
+
+
+
+what to include in HomeView
+HEADER 2 : current loaded semester header if any
+STATS 1: general stats and info on semester wide progress, time..
+CLASSES 0: classes cards that both shows info on classes and provide link to open them as new tabs
+BOTTOM_PANNEL 2: contains
+ session 0:  command for loading semester, (the semester is loaded system-wide and only one semester can be loaded)
+ scheme: 1:  commands for creaating, importing / exporting tasks scheme
+ shorcuts 2: commands for globally resetting the user progress, and room for potential  future commands that are similare 
+ utlity:  1: commands that open other secondary windows and services (e.g config, statistics)
+
+
+what to include in the home ClassCard
+
+Title sect 0 : just title, (potential image in the future
+Progress sect 0 : bar0 , number of unaccomplished tasks 1 bold, total number of tasks 1 
+Deadline sect 1 : plain text date, adding progressbar will make vsual cluster and loss the progress progbar it's affordance
+
+Open action: clickability and hovering feedback on the whole card
+Context menu :low affordance: right click context menu with further commands
+
+
+
+
+
+21-10-2021 6:21PM 
+after getting basic UI functionina and fairly well designed all the hirarchical views are woring 
+i got this idea of, a side panel where additional view may sit, somehow like vs's solution explorer,
+this one will feature a basic files explorer, enabling the user to include or exclude
+documents from thyre workspace and also specify their'e type, and other properties
+this workspace approach is good UX, as the user won't be doing extra work of creating the semester graph all manually, instead they may only need to phisically add the files in theyre workspace and stracture them the right way, the app then can auto check, and decide what to do with them
+folders presence may imply adding classes, documents in some special path and name may
+represent series, and exams, etc with that said the user should always have control over this automatic behavior in the settings 
+
+dealing with the xml is a no, dealing with forms is unwelcomed,
+the user shoould be able to achieve thing with few clicks, the workspace smart system should just
+know when a pdf document is a series, 

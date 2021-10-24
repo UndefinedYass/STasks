@@ -1,0 +1,35 @@
+﻿21-oct-2021
+time for this
+the STDS is the schema for (stasts doc) that are files that contain the tasks graph, they
+besically define the semster and it's children, but they does not caontain the user progress
+or any user-specific information (in fact the scheme itself can be user-specific but the point is that it's sharable amoung users while thing like progress information are not)
+the STDSchema should be extandable in a backward-compatibility safe way, taht is to avoid data losse nd awkward data conversion in the future as the app grows bigger
+
+the STDS is basic XML shema with a single root element: STDoc
+when chosing the rrot elem i could have gone with SemesterDefinition
+but then i realized a special root elemnt is more safe and can be suerd to save extra properties that has nothing to do with the semester such as the scheme version
+the folowing are all basic elements that ar needed now to get the app working
+sorted by parent to ascendant order
+some element's serve as complex-type properties to theyr parents and are indented
+STDoc
+SemesterDefinition
+ ClassesCollection
+ClassDefinition
+ SeriesCollection
+SeriesDefinition
+ ExercisesCollection
+ TasksCollection
+ExcerciseDefinition
+ TasksCollection
+Task
+
+simple type properties that are needed (can be extandable under the same v1 as new features required)
+STDoc: STDSVersion:i
+SemesterDefinition: Name:s
+ClassDefinition: Name:s, DeadlineDate:dt, 
+SeriesDefinition: USI:s
+ExcerciseDefinition: ExcerciseIndex:i, CustomName:s
+Task: TaskIndex:i, CustomName:s
+
+some propes are optional some are not, and some are mutually optional, if an XMLscheme was made i'l make sure to define the rules there
+

@@ -1,0 +1,185 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:View="clr-namespace:STasks.View"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:STasks"
+        xmlns:ViewModel="clr-namespace:STasks.ViewModel"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Converters="clr-namespace:Converters" x:Class="STasks.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow"
+    x:Name="window"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+    xmlns:TemplateSelectors="clr-namespace:STasks.View.TemplateSelectors"
+        d:DataContext="{d:DesignInstance {x:Type ViewModel:MainViewModel}, IsDesignTimeCreatable=True}" 
+    TextOptions.TextFormattingMode="Display" UseLayoutRounding="True" SnapsToDevicePixels="True" 
+    d:DesignWidth="701" Height="500" Width="760"
+    >
+    
+    <Window.Resources>
+        <TemplateSelectors:MMTabContentTemplateSelector x:Key="MMTabContentTemplateSelector"/>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
+        <DataTemplate x:Key="HomeTabContentTemplate">
+            <View:HomeView DataContext="{Binding DataContext, ElementName=window}">
+            </View:HomeView>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="ClassTabContentTemplate">
+            <View:ClassView >
+            </View:ClassView>
+        </DataTemplate>
+        
+        <ItemsPanelTemplate x:Key="ClassCardsListBoxPanelTemplate">
+            <WrapPanel IsItemsHost="True"/>
+        </ItemsPanelTemplate>
+        <Style x:Key="ClassCardsListBoxItemContainerTemplate" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" ClipToBounds="{TemplateBinding ClipToBounds}" Margin="4">
+
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.56"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="TabItemHeaderTemplateMi">
+            <Grid>
+                <TextBlock Text="zezz"/>
+            </Grid>
+        </DataTemplate>
+      
+     
+        <Style  TargetType="{x:Type TabItem}">
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}"/>
+            <Setter Property="Padding" Value="6,1,6,1"/>
+            
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="HeaderTemplate" >
+                <Setter.Value>
+                    <DataTemplate DataType="ViewModel:ITabContent" >
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="Had" Text="{Binding Title }" Margin="0,10,2,10" FontWeight="Bold"/>
+                            <materialDesign:PackIcon VerticalAlignment="Center" Kind="Asterisk" Width="10" Height="10" Visibility="{Binding IsDirty,Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <!--Button Visibility="{Binding IsSpecialHomeTab,Converter={StaticResource BooleanToVisibilityInverted}}" Name="closebutt" VerticalAlignment="Center" Padding="0" Height="Auto">
+                                <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
+                            </-->
+                        </StackPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger  Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}" Value="true">
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Foreground" TargetName="Had"  Value="{DynamicResource PrimaryHueMidBrush}"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Foreground" TargetName="Had"  Value="{DynamicResource PrimaryHueLightBrush}" />
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ContentTemplateSelector" Value="{StaticResource MMTabContentTemplateSelector}">
+                
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Border x:Name="Bd" BorderThickness="1,1,1,0" Padding="{TemplateBinding Padding}" Background="#00000000">
+                                <ContentPresenter x:Name="Content" ContentSource="Header" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                           
+                            
+                            <!--MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="false"/>
+                                    <Condition Property="IsMouseOver" Value="true"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource TabItemHotBorderBrush}"/>
+                            </>
+                            <Trigger Property="TabStripPlacement" Value="Bottom">
+                                <Setter Property="BorderThickness" TargetName="Bd" Value="1,0,1,1"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Left">
+                                <Setter Property="BorderThickness" TargetName="Bd" Value="1,1,0,1"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Right">
+                                <Setter Property="BorderThickness" TargetName="Bd" Value="0,1,1,1"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                    <Condition Property="TabStripPlacement" Value="Top"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Margin" Value="-2,-2,-2,-1"/>
+                                <Setter Property="Margin" TargetName="Content" Value="0,0,0,1"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                    <Condition Property="TabStripPlacement" Value="Bottom"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Margin" Value="-2,-1,-2,-2"/>
+                                <Setter Property="Margin" TargetName="Content" Value="0,1,0,0"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                    <Condition Property="TabStripPlacement" Value="Left"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Margin" Value="-2,-2,-1,-2"/>
+                                <Setter Property="Margin" TargetName="Content" Value="0,0,1,0"/>
+                            </MultiTrigger-->
+                            
+                            
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <TabControl  Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignPaper}" ItemsSource="{Binding Tabs}" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding CurrentSelectedTab}" />
+        <Grid Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="146*"/>
+                <ColumnDefinition Width="371*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="listBox" ItemsSource="{Binding CurrentSemesterViewModel.ClassesVMS}" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsAccomplished}"/>
+                            <ProgressBar  Style="{StaticResource MaterialDesignCircularProgressBar}"   Value="{Binding DiscretProgressAsFloat, Mode=OneWay}" Margin="6,0,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <View:ClassView Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=listBox}" />
+        </Grid>
+    </Grid>
+</Window>

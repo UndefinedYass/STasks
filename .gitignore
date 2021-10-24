@@ -1,0 +1,9 @@
+bin/
+SetupProject1/
+*.yassCmd
+backups/
+releases-notes.md
+release-planned.md
+packages/
+STDoc-XML Schema/
+*.yass.md
