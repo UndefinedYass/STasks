@@ -97,14 +97,23 @@
             <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="14.667" TextOptions.TextFormattingMode="Display"></TextBlock>
             <!--ProgressBar  Style="{StaticResource MaterialDesignCircularProgressBar}"   Value="{Binding DiscretProgressAsFloat, Mode=OneWay}" Margin="6,0,0,0"></-->
         </StackPanel>
+        <Grid Grid.Row="1" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <ListBox  ItemsSource="{Binding ExercisesVMS}" Grid.Row="1" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" ItemsPanel="{DynamicResource ItemsPanelTemplate1}" ScrollViewer.CanContentScroll="False" HorizontalContentAlignment="Stretch" MinWidth="100">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <local:ExerciseView DataContext="{Binding}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            <ListBox  ItemsSource="{Binding ExercisesVMS}" ItemContainerStyle="{DynamicResource ListBoxItemStyle2}" ItemsPanel="{DynamicResource ItemsPanelTemplate1}" ScrollViewer.CanContentScroll="False" HorizontalContentAlignment="Stretch" MinWidth="100">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:ExerciseView DataContext="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button x:Name="addExerciseBtn" Command="{Binding AddExerciseCommand}" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="{DynamicResource MaterialDesignBody}"  HorizontalAlignment="Right" Padding="4" Margin="0,6,10,6" VerticalAlignment="Bottom" Height="Auto" Grid.Row="1" ToolTip="Add Exercise" >
+                <materialDesign:PackIcon Kind="Plus" Width="16" Height="16"/>
+            </Button>
+        </Grid>
         <materialDesign:Card Grid.Column="1" Height="271" Margin="0,33,0,0" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" Padding="20,0">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Foreground="{DynamicResource MaterialDesignBodyLight}" x:Name="textBlock" TextWrapping="Wrap" Text="Document not available" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13.333"/>

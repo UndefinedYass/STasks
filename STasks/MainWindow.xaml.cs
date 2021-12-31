@@ -25,5 +25,22 @@ namespace STasks
             InitializeComponent();
             DataContext = STasks.ViewModel.MainViewModel.Instance;
         }
+
+        private void Explorer_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void DockPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            DockPanel my_dockPanel = sender as DockPanel;
+            AdornerLayer al = AdornerLayer.GetAdornerLayer(my_dockPanel);
+            al.Add(new View.Adorners.ResizeDockedGridAdorner(Explorer, View.Adorners.ResizeDockedGridAdornerType.left));
+            al.Add(new View.Adorners.ResizeDockedGridAdorner(STATS, View.Adorners.ResizeDockedGridAdornerType.top));
+
+        }
+
+
+       
     }
 }

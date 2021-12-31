@@ -26,4 +26,30 @@ namespace STasks.View.TemplateSelectors
         }
     }
 
+
+
+    public class ExplorerTreeItemTemplateSelector : DataTemplateSelector
+    {
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            FrameworkElement elem = container as FrameworkElement;
+            DataTemplate FolderTemplate = ((DataTemplate)elem.FindResource("TreeHeaderTemplate_Folder"));
+            DataTemplate FileTemplate = ((DataTemplate)elem.FindResource("TreeHeaderTemplate_File"));
+            if (item != null && item is Model.Explorer.IExplorerElement)//nt type when implemented
+            {
+                switch (((Model.Explorer.IExplorerElement)item).Type)
+                {
+                    case Model.Explorer.ExplorerElementType.Folder:
+                        return FolderTemplate;
+                    case Model.Explorer.ExplorerElementType.File:
+                        return FileTemplate;
+                    default:
+                        return null;
+                }
+            }
+            else return null;
+
+        }
+    }
+
 }

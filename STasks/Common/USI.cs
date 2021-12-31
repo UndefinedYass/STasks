@@ -30,6 +30,22 @@ namespace STasks.Common
         /// </summary>
         public int Year { get; set; }
         public int SeriesNumber { get; set; }
+        public static bool TryParse(string usi_as_string, out USI output)
+        {
+            Match m = Regex.Match(usi_as_string, @"([^.]+)\.serie(\d)\.?(\d{4})?", RegexOptions.IgnoreCase);
+            if (m.Success == false)
+            {
+                output = new USI("", 1111, 1);
+                return false;
+            }
+            USI res = new USI();
+            res.ClassName = m.Groups[1].Value;
+            res.SeriesNumber = int.Parse(m.Groups[2].Value);
+            res.Year = m.Groups[3].Success ? int.Parse(m.Groups[3].Value) : -1;
+            output = res;
+            return true;
+
+        }
         public USI(string usi_as_string)
         {
 

@@ -2,8 +2,15 @@ C:\TOOLS\STasks\UnitTestProject1\bin\Debug\UnitTestProject1.dll
 C:\TOOLS\STasks\UnitTestProject1\bin\Debug\UnitTestProject1.pdb
 C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\TOOLS\STasks\UnitTestProject1\bin\Debug\STasks.exe
-C:\TOOLS\STasks\UnitTestProject1\bin\Debug\STasks.pdb
 C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
 C:\TOOLS\STasks\UnitTestProject1\obj\Debug\UnitTestProject1.csprojResolveAssemblyReference.cache
 C:\TOOLS\STasks\UnitTestProject1\obj\Debug\UnitTestProject1.dll
 C:\TOOLS\STasks\UnitTestProject1\obj\Debug\UnitTestProject1.pdb
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Resources\Icons\explorerElement-PDF.png
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\OxyPlot.dll
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Ookii.Dialogs.Wpf.dll
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\STasks.pdb
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\OxyPlot.pdb
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\OxyPlot.xml
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Ookii.Dialogs.Wpf.pdb
+C:\TOOLS\STasks\UnitTestProject1\bin\Debug\Ookii.Dialogs.Wpf.xml

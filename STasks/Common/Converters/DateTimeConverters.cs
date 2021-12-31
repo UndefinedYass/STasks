@@ -9,6 +9,20 @@ using System.Windows.Data;
 
 namespace Converters
 {
+
+
+
+
+    public class DateTimeUtils
+    {
+        public static string FormatDate(DateTime d)
+        {
+            string[] months = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".Split(',');
+             return $"{d.Day} {months[d.Month - 1]}"; 
+           
+        }
+    }
+
     [ValueConversion(typeof(DateTime?), typeof(TimeSpan?))]
     class NullableDateTimeToTimeSpan : IValueConverter
     {

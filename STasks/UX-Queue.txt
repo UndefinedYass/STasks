@@ -54,3 +54,103 @@ represent series, and exams, etc with that said the user should always have cont
 dealing with the xml is a no, dealing with forms is unwelcomed,
 the user shoould be able to achieve thing with few clicks, the workspace smart system should just
 know when a pdf document is a series, 
+
+
+25-oct-2021 progress visuals UX
+this is the UX desired behaviou your free to mplement it the way u want,
+vsual elements: checkIcon, progressBar, remaningCC, totalCC, CheckBox
+
+usefulMacros: 
+  IsDetermined : shortcut for TotalCount > 0
+  IsComplete: Ratio == 1
+ 
+
+checkIcon visibility: ture whe IsComplete and IsDetermined
+
+progressBar Visibility: ture when IsDetermined And not IsComplete and percent is not 0
+progressBar value:      bound to the percent int property
+
+remainingCC visibility: always visible on the views that support it (whether a container view have t                        or not is a matter of UI design choice)
+remaningCC value:       bound to TotalCount-CompleteCount 
+
+totalCC  vsibility:     same as remainingCC
+
+CheckBox vsibiliy:   alwayy vsible on views that have it
+CheckBox isEnabled:  enabled when IsDetermined (implemented at base vm as IsCompletionRequiringAllowed property)
+CheckBox Value:      if isDetermined it should mirror the IsComplete, otherwise better be unchecked
+
+SetCompletionCommands (set/reset) these are usually called after checkbox value changed on the view model
+isEnabled: "IsDetermined"
+
+containers:
+they have containers and children, based on these two :
+
+
+
+
+
+
+# 27-oct-2021: Stats features conception
+ok i'm probably way off time, but i'm stuck i'm loving working on this project, also some really cool ploting chanllenges are about to arise, inclding cool maths stuff
+
+the Stats part is mainly about visualising the overall user progress 
+the "ploting view" features an (oxyPlot) view some additional UI parts, 
+there two main curves in the (oxy) view: 
+-the progress over time curv
+-progress change or rate over time curv
+in adition to the curves there are "markers"
+i define two type of markers, the verical one and (one) horizental one
+markers are basically lines with labels that sit on a specific hozizental or vertical offset,
+there is deadLine marker: a horizental marker that highltes the semester deadline date
+CompletedProgressMarker: a vertical marker that mirrors the current overall user progress(in tasks unit)
+GoalMarker: verical marker, represents the count of all semsesters tasks
+the mrkers positions are not user manupilated, and the GoalMarker isalways higher than 
+the CompletedProgressMarker 
+UI tip:
+markers, at the root of their related axe, render a small filled label that shows the marker value, whther it's a date or a simple integer, and that label have a sticky mechanisme to keep it visible at any ofset and zoom cconfguration 
+
+these curvs should lie toghether, with some nice UI elements that enabels the user to:
+hide/unhide curvs
+hide/unhide "deadlineMarker"
+control horizontal (time) scale 
+control horizontal (time) offset (scrollbar or two buttons or a draggin guestur)
+
+ the vertical zoom and ofset control is unececary and would complicate the UI 
+ the ui should provide some way to easily switch between these plot view configurations:
+ week mode: the ofset and zoom is optimized for a btter last week view, the right edge of the plot is Now, the deadlineMarker is unvisible
+ deadLine mode: the offset and zoom are adjusted to make the whole "semester time" vsible, with deadline marker and progress/time curve visible
+
+
+
+ TODO: 
+ 1- implement this dev time functionality:
+    completing a bb will register the completion date to (instead of what it should be:Now) the date determined by the current plot offset, this will facilitate developing and testing the next functionalitis
+2- get the PlotingServic piece of code that generates the progressCurv points working and efficient
+33 plug everything toghether and start testing
+
+
+UX Issues can be the hardest to solve
+how do hell should this whole completion date thing behave
+there are awkward tradeoffs between simplicity and forgiveness
+what if the user accidentally completed the whole semester? would that cause a global override for each task's completionDate, what about the old information?
+is it convenient to expose a manual "set COMPLETION DATE" option and throw all the work at the user 
+
+let's start over again, conception time
+# what is the goal?
+the goal is to save the necessary completionDate informaton that other features rely on: ploting and stats features
+# what are the initial solutions:
+simply set the completionDate to Now whenever the user hits the completion command and make sure to save/retrieve the data back
+# what are the problems that araise
+1- when excactely the completionDate information should be updated? the worst answer is when the task progress changes because that changes at various stages from construction time, refreshing etc..
+the second answer: when the change source is userAcion: now this aswell have problems:
+the user can accidentaly toggl off and on the progress completion, this causes information loss
+further solution:
+the task wll aswell have some "history" data; this indicates whether the task has ever been completed or not, so if a tsk has been completed once, and the user reset it's completon at some moment, when the user set's the completion back the system will be aware of the data loos risk and will prompt the user for taking the right action: reset date to now or keep old date
+while this keeps things less complecated most of the time, there is as well a nasty side effect:
+when the source of action is a ancestor complexObj, proptng the user multiple time at each ascendant taks will be inconvenietn and implementing an aditioal step that predicts all these prompts and wra them up n a silgle one might sound acceptable for the UX but might as well add alot of overhead
+well , this sounds like the solution for now
+"Some tasks might have been their completion date informaton overriden:"
+"Override completion date with Now"  "Preserve old completion date"
+
+
+

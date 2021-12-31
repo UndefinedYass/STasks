@@ -13,7 +13,7 @@ namespace STasks.View.Attached
     public class BindKeyToCommand
     {
 
-        static TextBox tb;
+        
 
         public static Key GetKey(DependencyObject obj)
         {

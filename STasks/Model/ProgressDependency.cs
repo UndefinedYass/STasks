@@ -19,6 +19,7 @@ namespace STasks.Model
     /// also when children accomplishmet state change, that change doesnt have to propagate all the way
     /// to the root, but it should stop at the first ascendant whos IsAccomplished value didn't get affected
     /// </summary>
+    [Obsolete("use STContainer or STBuildingBlock instead",true)]
     public class ProgressDependency: IAccomplishable
     {
 
@@ -266,6 +267,7 @@ namespace STasks.Model
 
 
 
+    [Obsolete("use ProgressObejct",true)]
     public struct DiscretProgress
     {
         internal static DiscretProgress zero = new DiscretProgress(0,0);

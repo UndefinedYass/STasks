@@ -1,4 +1,5 @@
 ﻿using STasks.Model;
+using STasks.Model.Bases;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,32 +7,49 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Input;
 
 namespace STasks.ViewModel
 {
-    public class ClassViewModel : BaseDependencyProgViewModel ,ITabContent
+    public class ClassViewModel : BaseProgressObjectViewModel ,ITabContent
     {
         public ClassViewModel(Class model): base(model)
         {
-            SeriesVMS = new ObservableCollection<SeriesViewModel>(model.Series.Select((serie) => new SeriesViewModel(serie)));
-            Name = model.Name;
+            SeriesVMS = new ObservableCollection<SeriesViewModel>(model.Series.Select((serie) => new SeriesViewModel(serie as Series)));
+            notif(nameof(Name));
             CurrentSelectedSeriesIndex = 0;
             ModelClass = model;
+            ModelClass.PropertyChanged += (s, e) =>
+            {
+                notif(nameof(Name));
+                notif(nameof(Title));
+            };
         }
 
-        public ClassViewModel():base(Common.Mock.GetDummyClass())
+        public ClassViewModel():base(( Common.Mock.GetDummyClass()))
         {
+            //design-time
             ModelClass = Common.Mock.GetDummyClass("d-time-class");
-            SeriesVMS = new ObservableCollection<SeriesViewModel>(ModelClass.Series.Select((s) => new SeriesViewModel(s)));
-            Name = "ELECT";
+            SeriesVMS = new ObservableCollection<SeriesViewModel>(ModelClass.Series.Select((s) => new SeriesViewModel(s as Series)));
+            notif(nameof(Name));
         }
 
-        private string _Name;
+
+        internal override void handleContainerAdded(STContainer newContainer)
+        {
+            SeriesVMS.Add(new SeriesViewModel((Series)newContainer) { IsRenaming = true });
+        }
+        internal override void handleContainerRemoved(STContainer removedContainer)
+        {
+            Series rem = removedContainer as Series;
+            SeriesViewModel removedOne = SeriesVMS.FirstOrDefault((cc) => cc.SeriesModel == rem);
+            SeriesVMS.Remove(removedOne);
+        }
+
+
         public string Name
         {
-            set { _Name = value; notif(nameof(Name)); }
-            get { return _Name; }
+            get { return ModelClass?.Name; }
         }
        
 
@@ -71,10 +89,44 @@ namespace STasks.ViewModel
         {
             get
             {
-                return Name;
+                return ModelClass.Name;
             }
         }
 
+
+
+
         public Class ModelClass { get; internal set; }
+
+
+
+
+        public ICommand AddSeriesCommand
+        {
+            get { return new Common.MICommand(HandleAddSeriesCommand); }
+        }
+        public ICommand ClearSeriesCommand
+        {
+            get { return new Common.MICommand(HandleClearSeriesCommand); }
+        }
+
+        private void HandleClearSeriesCommand()
+        {
+            ModelClass.Containers.Clear();
+
+        }
+
+        private void HandleAddSeriesCommand()
+        {
+            int series_max_index = 0;
+            if (ModelClass.Series.Any())
+            {
+                series_max_index = ModelClass.Series.Max((s) => (s as Series).Usi.SeriesNumber);
+
+            }
+
+            ModelClass.Containers.Add(new Series() { Usi=new Common.USI(this.Name,2021, series_max_index+1) });
+
+        }
     }
 }

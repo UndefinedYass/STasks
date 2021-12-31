@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace STasks.ViewModel
 {
-    public class TaskViewModel : BaseDependencyProgViewModel, IRenamingTextBoxViewModel
+    public class TaskViewModel : BaseProgressObjectViewModel, IRenamingTextBoxViewModel
     {
         public ICommand RenameCommand
         {

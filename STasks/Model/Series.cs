@@ -1,7 +1,10 @@
 ﻿using STasks.Common;
+using STasks.Model.Bases;
 using STasks.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,13 +13,12 @@ using System.Threading.Tasks;
 namespace STasks.Model
 {
     
-    public class Series : ProgressDependency
+    public class Series : STContainer
     {
 
-        public event EventHandler<Exercise> ExerciseRemoved;//todo identify by guid
-        public Series(Class class_par):base(class_par,false)
+        public Series()
         {
-            
+            Debug.WriteLine("series ctor");
         }
         public USI Usi { get; set; }
 
@@ -28,12 +30,10 @@ namespace STasks.Model
 
         public void RemoveExercise(Exercise ex)
         {
-            Exercises.Remove(ex);
-            base.UnRegisterChild(ex);
-            ExerciseRemoved?.Invoke(this, ex);
+           
 
         }
-        public IList<Exercise> Exercises { get; set; }
+        public ObservableCollection<STContainer> Exercises { get { return Containers; } set { Containers = value; } }
 
        
     }

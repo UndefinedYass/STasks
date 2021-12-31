@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\TOOLS\STasks\STasks\App.xaml
-5-820024224
+7-409756462
 
-45-1855842441
-191000215793
-MainWindow.xaml;View\ClassView.xaml;View\ExerciseView.xaml;View\HomeView.xaml;View\SeriesView.xaml;
+68-1833621716
+106-131961780
+MainWindow.xaml;View\ClassPropertiesWindow.xaml;View\ClassView.xaml;View\ExerciseView.xaml;View\HomeView.xaml;View\SeriesView.xaml;View\StatsView.xaml;
 
 False
 

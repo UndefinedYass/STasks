@@ -27,8 +27,9 @@ namespace STasks.Services
         public static ConfigService Instance { get { if (_Instance == null) _Instance = ConfigService.Load(); return _Instance; } }
 
         public string CurrentSTDocPath { get; set; } = string.Empty;
+        public string CurrentWorkspaceDirectory { get; set; } = @"C:\faculte\s5 2021";
 
-
+        public bool UseMockSemester { get; set; }
         static XmlSerializer sr = new XmlSerializer(typeof(ConfigService));
         /// <summary>
         /// attemps to load the xml config file, if file is missing the factory config is automatically saved and returned

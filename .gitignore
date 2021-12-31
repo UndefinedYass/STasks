@@ -7,3 +7,8 @@ release-planned.md
 packages/
 STDoc-XML Schema/
 *.yass.md
+TestResults/
+packages/
+UnitTestProject1/
+readme.yass.md
+obj/

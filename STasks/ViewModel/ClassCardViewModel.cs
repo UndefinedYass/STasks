@@ -1,6 +1,5 @@
 ﻿using System;
 using STasks.Model;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,61 +7,76 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using STasks.Common;
+using STasks.Model.Bases;
 
 namespace STasks.ViewModel
 {
-    public class ClassCardViewModel  :BaseViewModel
+    public class ClassCardViewModel  :BaseViewModel, IRenamingTextBoxViewModel
     {
         public ClassCardViewModel()
         {
             //design-time
         }
-        public ClassCardViewModel(int i)
-        {
-
-        }
+       
 
         public ClassCardViewModel(Class c)
         {
             ModelClass = c;
-            this.Title = c.Name;
+            
             Prog = c.Progress;
             DeadlineDate = c.ExamDate;
-            c.ProgressChanged += (s, e) => { Prog = c.Progress; };
+            c.Progress.PropertyChanged += (s, e)=>{
+                //todo notif
+                notif(nameof(IsDoneIconVisible));
+                notif(nameof(Remaining));
+                notif(nameof(AllTasksCount));
+                notif(nameof(AccomplishedTasksCount));
+                notif(nameof(ProgressColor));
+                notif(nameof(IsProgressVisible));
+
+            };
+            ModelClass.PropertyChanged += (s, e) =>
+            {
+                notif(nameof(Title));
+                notif(nameof(DeadlineDate));
+            };
+            EditingDate = ModelClass.ExamDate;
+            EditingNotes = ModelClass.Notes;
+            
 
         }
 
-        private int _Remaining;
+        
         public int Remaining
         {
-            get { return Prog.AllDescendantTasksCout-Prog.AccomplishedTasksCount; }
+            get { return Prog.TotalCount-Prog.CompletedCount; }
         }
 
 
-        private int _AllTasksCount;
+        
         public int AllTasksCount
         {
-            get { return Prog.AllDescendantTasksCout; }
+            get { return Prog.TotalCount; }
         }
 
 
-        private int _AccomplishedTasksCount;
+        
         public int AccomplishedTasksCount
         {
-            get { return Prog.AccomplishedTasksCount; }
+            get { return Prog.CompletedCount; }
         }
 
 
-        private string _Title;
         public string Title
         {
-            set { _Title = value; notif(nameof(Title)); }
-            get { return _Title; }
+          
+            get { return  ModelClass.Name; }
         }
 
 
-        private DiscretProgress _Prog;
-        public DiscretProgress Prog
+        private ProgressObject _Prog;
+        public ProgressObject Prog
         {
             set { _Prog = value; notif(nameof(Prog)); notif(nameof(Remaining));
                 notif(nameof(AllTasksCount)); notif(nameof(AccomplishedTasksCount));
@@ -73,7 +87,7 @@ namespace STasks.ViewModel
 
 
         private DateTime _DeadlineDate;
-        private Class c;
+        
 
         public DateTime DeadlineDate
         {
@@ -84,20 +98,31 @@ namespace STasks.ViewModel
 
         public System.Windows.Media.Brush ProgressColor
         {
-            get { return new SolidColorBrush(Common.ColorUtils.GreenRedScaleDiscret(Prog.Progress)); }
+            get { return new SolidColorBrush(Common.ColorUtils.GreenRedScaleDiscret(Prog.Ratio)); }
         }
 
+        //todo remove useless property
         public bool IsComplete
         {
-            get { return Prog.Progress==1; }
+            get { return Prog.IsComplete; }
         }
 
         /// <summary>
-        /// Progress bar and text should not be visible when it's 0% or 100% or NaN
+        /// according to UX specifications this should be IsComplete and IsDetermined
+        /// </summary>
+        public bool IsDoneIconVisible
+        {
+            get { return  Prog.IsComplete && Prog.IsDetermined; }
+        }
+
+
+
+        /// <summary>
+        /// UX Specs: ture when IsDetermined And not IsComplete and percent is not 0
         /// </summary>
         public bool IsProgressVisible
         {
-            get { var p = Prog.Progress; return p !=0 && p!= float.NaN && p < 1; }
+            get { return Prog.IsDetermined && Prog.Percent!=0 &&  !Prog.IsComplete; }
         }
 
 
@@ -111,5 +136,115 @@ namespace STasks.ViewModel
             } }
 
         public Class ModelClass { get; private set; }
+
+
+        private bool _IsRenaming;
+        public bool IsRenaming
+        {
+            set { _IsRenaming = value; notif(nameof(IsRenaming)); }
+            get { return _IsRenaming; }
+        }
+
+
+
+        public ICommand RenameCommand
+        {
+            get
+            {
+                return new MICommand(handleRenameCommand);
+            }
+        }
+
+        private void handleRenameCommand()
+        {
+            RenamingName = ModelClass.Name;
+            IsRenaming = true;
+        }
+
+
+        private string _RenamingName;
+        public string RenamingName
+        {
+            set { _RenamingName = value; notif(nameof(RenamingName)); }
+            get { return _RenamingName; }
+        }
+
+        //OpenPropertiesCommand
+
+        public ICommand OpenPropertiesCommand
+        {
+            get { return new MICommand(handleOpenPropertiesCommand); }
+        }
+        public ICommand SavePropertiesCommand
+        {
+            get { return new MICommand(handleSavePropertiesCommand); }
+        }
+
+
+        private DateTime _EditingDate;
+        public DateTime EditingDate
+        {
+            set { _EditingDate = value; notif(nameof(EditingDate)); }
+            get { return _EditingDate; }
+        }
+
+
+        private string _EditingNotes;
+        public string EditingNotes
+        {
+            set { _EditingNotes = value; notif(nameof(EditingNotes)); }
+            get { return _EditingNotes; }
+        }
+
+
+
+        private void handleSavePropertiesCommand()
+        {
+            ModelClass.ExamDate = EditingDate;
+            ModelClass.Notes = EditingNotes;
+            DeadlineDate = ModelClass.ExamDate;
+            notif(nameof(Title));
+            notif(nameof(DeadlineDate));
+
+        }
+
+        private void handleOpenPropertiesCommand()
+        {
+            View.ClassPropertiesWindow cpw = new View.ClassPropertiesWindow();
+            cpw.DataContext = this;
+            cpw.ShowDialog();
+        }
+
+        public ICommand RequireCompletionCommand
+        {
+            get { return new MICommand<bool>(handleRequireCompletionCommand, (val) => ModelClass.Progress.IsDetermined); }
+        }
+
+        private void handleRequireCompletionCommand(bool value)
+        {
+            ModelClass.Progress. RequireCompletion(value);
+        }
+
+
+        public void TextBoxLostFocusOrEnterKeyCallBack(bool HasLostFocus)
+        {
+            IsRenaming = false;
+            if (validateRenamingName(RenamingName))
+            {
+                ModelClass.Name = RenamingName;
+                //notif(nameof(Title));
+
+            }
+            else
+            {
+                //todo feedback name is invalid
+            }
+            
+        }
+
+        private bool validateRenamingName(string renamingName)
+        {
+            return (string.IsNullOrWhiteSpace(RenamingName)) == false && (renamingName.Contains(".")==false);
+        }
     }
 }

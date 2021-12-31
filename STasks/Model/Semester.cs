@@ -1,5 +1,8 @@
-﻿using System;
+﻿using STasks.Model.Bases;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,13 +21,13 @@ namespace STasks.Model
     /// </summary>
 
 
-    public class Semester : ProgressDependency
+    public class Semester : STContainer
     {
-        public Semester():base(null, false)
+        public Semester()
         {
-
+            Debug.WriteLine("Semester ctor");
         }
         public string Name { get; set; }
-        public IEnumerable<Class> Classes { get; set; }
+        public ObservableCollection<STContainer> Classes { get { return Containers; } set { Containers = value; } }
     }
 }

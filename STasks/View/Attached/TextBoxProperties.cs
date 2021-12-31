@@ -57,7 +57,7 @@ namespace STasks.View.Attached
                 tb.Dispatcher.BeginInvoke( new Action( () =>
                 {
                     Keyboard.Focus(tb);
-                    MenuItem ui;
+                    
                     
                 }) );
 

@@ -3,17 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:STasks.View"
              xmlns:ViewModel="clr-namespace:STasks.ViewModel"
     xmlns:attached="clr-namespace:STasks.View.Attached"
-             xmlns:Converters="clr-namespace:Converters" x:Class="STasks.View.ExerciseView"
+             xmlns:Converters="clr-namespace:Converters" x:Name="userControl" x:Class="STasks.View.ExerciseView"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance {x:Type ViewModel:ExerciseViewModel}, IsDesignTimeCreatable=True}"
              d:DesignHeight="300" d:DesignWidth="300" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True">
     <UserControl.Resources>
         <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <DataTemplate x:Key="AddMultipleTasksDialogViewModelTemplate" DataType="{x:Type ViewModel:AddMultipleTasksDialogViewModel}">
+            <StackPanel Margin="16">
+                <TextBlock Text="Count:"/>
+                <TextBox Margin="0 8 0 0" Text="{Binding Count}"/>
+                <Button
+                        Margin="0 8 0 0"
+                        IsDefault="True"
+                        Command="{Binding AddCommand}"
+                        Style="{DynamicResource MaterialDesignFlatButton}"
+                        Content="Add"/>
+            </StackPanel>
+        </DataTemplate>
+
         <Style x:Key="CheckBoxStyle1" TargetType="{x:Type CheckBox}">
             <Setter Property="FocusVisualStyle">
                 <Setter.Value>
@@ -160,55 +174,86 @@
         </Style>
     </UserControl.Resources>
     <Grid  >
-        <Expander   materialDesign:ExpanderAssist.HeaderFontSize="11" materialDesign:ExpanderAssist.HorizontalHeaderPadding="4" materialDesign:ExpanderAssist.VerticalHeaderPadding="6" TextOptions.TextFormattingMode="Display" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" HorizontalContentAlignment="Stretch"  >
-            <Expander.Header>
-                <Grid Focusable="True"  Background="Transparent" attached:BindKeyToCommand.SetKeyboardFocusOnMouseClick="true"  attached:BindKeyToCommand.Key="F2" attached:BindKeyToCommand.Command="{Binding RenameCommand}" Height="20">
-                    <Grid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Rename" Command="{Binding RenameCommand}"/>
-                            <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+        <materialDesign:DialogHost
+            DialogContentTemplate="{StaticResource AddMultipleTasksDialogViewModelTemplate}"
+            IsOpen="{Binding IsDialogOpen}"
+            CloseOnClickAway="True"
+            DialogContent="{Binding  CurrentDialogContent}"
+            >
+           
 
-                        </ContextMenu>
-                    </Grid.ContextMenu>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="24"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock     Foreground="{DynamicResource MaterialDesignBody}" x:Name="textBlock" TextWrapping="Wrap" Text="{Binding Title}" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" SnapsToDevicePixels="True" FontWeight="Bold" FontSize="13.333" Margin="0,0,6,0" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityInverted}}" />
-                    <TextBox  materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 2 0" attached:TextBoxProperties.InvokeLostFocusOrEnterCallback="True"  Foreground="{DynamicResource MaterialDesignBody}" x:Name="RenamingTextBox" TextWrapping="Wrap" Text="{Binding RenamingName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" attached:TextBoxProperties.IsAllSelected="{Binding IsRenaming, Mode=OneWay}" SnapsToDevicePixels="True" FontWeight="Bold" FontSize="13.333" Margin="0,0,6,0" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}" Padding="0,0,2,0" VerticalContentAlignment="Center"/>
-                    <ProgressBar  Style="{StaticResource MaterialDesignCircularProgressBar}"   Value="{Binding DiscretProgressAsFloat, Mode=OneWay}" Visibility="Collapsed" Height="Auto" Width="Auto" Grid.Column="2"/>
-                    <materialDesign:PackIcon Kind="CheckBold" Width="16" Height="16" Foreground="#FF0ABF00" VerticalAlignment="Center" Visibility="{Binding IsAccomplished, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center" Grid.Column="2"/>
-                    <CheckBox IsChecked="{Binding IsAccomplished}" Visibility="Collapsed" Grid.Column="1" />
+            <Expander   materialDesign:ExpanderAssist.HeaderFontSize="11" materialDesign:ExpanderAssist.HorizontalHeaderPadding="4" materialDesign:ExpanderAssist.VerticalHeaderPadding="6" TextOptions.TextFormattingMode="Display" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" HorizontalContentAlignment="Stretch"  >
+                <Expander.Header>
+
+                    <Grid Focusable="True"  Background="Transparent" attached:BindKeyToCommand.SetKeyboardFocusOnMouseClick="true"  attached:BindKeyToCommand.Key="F2" attached:BindKeyToCommand.Command="{Binding RenameCommand}" Height="20">
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Rename" Command="{Binding RenameCommand}"/>
+                                <MenuItem Header="Add task" Command="{Binding AddTaskCommand}"/>
+                                <MenuItem Header="Add tasks" Command="{ Binding OpenDialogCommand}" CommandParameter="{Binding AddMultipleTasksDialogViewModelInstance}">
+                                    <!--MenuItem.CommandParameter>
+                                        <Grid  Width="160">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="100"/>
+                                                <RowDefinition Height="44"/>
+                                                
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Orientation="Horizontal" Height="44">
+                                                <TextBlock Text="Count:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="4,0"/>
+                                                <TextBox x:Name="TasksCountToAddTB" Text="1" VerticalAlignment="Center" Margin="4,0,6,0"/>
+                                            </StackPanel>
+                                            <Button Grid.Row="1" Content="Add" VerticalAlignment="Center" Command="{Binding AddTasksCommand}" CommandParameter="{Binding Text, ElementName=TasksCountToAddTB}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        </Grid>
+                                    </-->
+                                    
+                                </MenuItem>
+                                <MenuItem Header="Clear tasks" Command="{Binding ClearTasksCommand}"/>
+
+                                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"  />
+
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="24"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock     Foreground="{DynamicResource MaterialDesignBody}" x:Name="textBlock" TextWrapping="Wrap" Text="{Binding Title}" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" SnapsToDevicePixels="True" FontWeight="Bold" FontSize="13.333" Margin="0,0,6,0" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityInverted}}" />
+                        <TextBox  materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 2 0" attached:TextBoxProperties.InvokeLostFocusOrEnterCallback="True"  Foreground="{DynamicResource MaterialDesignBody}" x:Name="RenamingTextBox" TextWrapping="Wrap" Text="{Binding RenamingName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Center" TextOptions.TextFormattingMode="Display" attached:TextBoxProperties.IsAllSelected="{Binding IsRenaming, Mode=OneWay}" SnapsToDevicePixels="True" FontWeight="Bold" FontSize="13.333" Margin="0,0,6,0" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}" Padding="0,0,2,0" VerticalContentAlignment="Center"/>
+                        <ProgressBar  Style="{StaticResource MaterialDesignCircularProgressBar}"   Value="{Binding DiscretProgressAsFloat, Mode=OneWay}" Visibility="Collapsed" Height="Auto" Width="Auto" Grid.Column="2"/>
+                        <materialDesign:PackIcon Kind="CheckBold" Width="16" Height="16" Foreground="#FF0ABF00" VerticalAlignment="Center" Visibility="{Binding  IsDoneVisible, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center" Grid.Column="2"/>
+                        <CheckBox IsChecked="{Binding IsAccomplished}" Visibility="Collapsed" Grid.Column="1" />
+                    </Grid>
+                </Expander.Header>
+                <Grid>
+                    <ListBox materialDesign:ListBoxItemAssist.CornerRadius="0"  materialDesign:TransitionAssist.DisableTransitions="True"  ItemsSource="{Binding TasksVMS}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  Padding="0" Margin="0">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                <Setter Property="Padding" Value="0"/>
+
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="ViewModel:TaskViewModel" >
+                                <Grid attached:BindKeyToCommand.Key="F2" attached:BindKeyToCommand.Command="{Binding RenameCommand}" attached:BindKeyToCommand.SetKeyboardFocusOnMouseClick="True" >
+                                    <CheckBox   materialDesign:CheckBoxAssist.CheckBoxSize="16"    IsChecked="{Binding IsAccomplished}" BorderBrush="#FFBB0606" VerticalContentAlignment="Center" Padding="6,0,0,0" UseLayoutRounding="True" HorizontalContentAlignment="Stretch"   FontSize="13.333" Height="24" Margin="4,0,0,0">
+                                        <Grid >
+                                            <TextBlock  Text="{Binding Title}" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityInverted}}" VerticalAlignment="Center" ></TextBlock>
+                                            <TextBox attached:TextBoxProperties.InvokeLostFocusOrEnterCallback="True" attached:TextBoxProperties.IsAllSelected="{Binding IsRenaming}" materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 2 0" Text="{Binding RenamingName}" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" ></TextBox>
+
+
+                                        </Grid>
+                                    </CheckBox>
+
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
-            </Expander.Header>
-            <Grid>
-                <ListBox materialDesign:ListBoxItemAssist.CornerRadius="0"  materialDesign:TransitionAssist.DisableTransitions="True"  ItemsSource="{Binding TasksVMS}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  Padding="0" Margin="0">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-                            <Setter Property="Padding" Value="0"/>
-                            
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+            </Expander>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="ViewModel:TaskViewModel" >
-                            <Grid attached:BindKeyToCommand.Key="F2" attached:BindKeyToCommand.Command="{Binding RenameCommand}" attached:BindKeyToCommand.SetKeyboardFocusOnMouseClick="True" >
-                                <CheckBox   materialDesign:CheckBoxAssist.CheckBoxSize="16"    IsChecked="{Binding IsAccomplished}" BorderBrush="#FFBB0606" VerticalContentAlignment="Center" Padding="6,0,0,0" UseLayoutRounding="True" HorizontalContentAlignment="Stretch"   FontSize="13.333" Height="24" Margin="4,0,0,0">
-                                    <Grid >
-                                        <TextBlock  Text="{Binding Title}" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityInverted}}" VerticalAlignment="Center" ></TextBlock>
-                                        <TextBox attached:TextBoxProperties.InvokeLostFocusOrEnterCallback="True" attached:TextBoxProperties.IsAllSelected="{Binding IsRenaming}" materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 2 0" Text="{Binding RenamingName}" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" ></TextBox>
-
-
-                                    </Grid>
-                                </CheckBox>
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </Expander>
-
+        </materialDesign:DialogHost>
+       
     </Grid>
 </UserControl>

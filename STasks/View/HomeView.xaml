@@ -5,10 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:STasks.View"
     xmlns:attached="clr-namespace:STasks.View.Attached"
-             xmlns:ViewModel="clr-namespace:STasks.ViewModel" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="STasks.View.HomeView"
+             xmlns:ViewModel="clr-namespace:STasks.ViewModel" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:Converters="clr-namespace:Converters" x:Class="STasks.View.HomeView"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="556">
     <UserControl.Resources>
+
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+
+        <Converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
 
         <ItemsPanelTemplate x:Key="ClassCardsListBoxPanelTemplate">
             <WrapPanel IsItemsHost="True"/>
@@ -77,8 +81,17 @@
             <ListBox materialDesign:RippleAssist.IsDisabled="True" x:Name="listBox1" Margin="4" Grid.Row="1"  ItemsPanel="{DynamicResource ClassCardsListBoxPanelTemplate}" ItemContainerStyle="{DynamicResource ClassCardsListBoxItemContainerTemplate1}"  ItemsSource="{Binding CurrentSemesterViewModel.ClassCardsVMS}" SelectionMode="Extended" Grid.ColumnSpan="2">
                 <ListBox.ItemTemplate>
                     <DataTemplate   DataType="ViewModel:ClassCardViewModel" >
-                        <Grid Height="Auto" Width="Auto" Background="White">
-                            <materialDesign:Card attached:ClassCardProperties.OpenCommand="{Binding OpenCommand}"  attached:ClassCardProperties.ExecuteOpenActionOnDoubleClick="true" Margin="0" d:LayoutOverrides="Width, Height" MinHeight="96" >
+                        <Grid x:Name="grdd" Height="Auto" Width="Auto" Background="White" >
+                            <materialDesign:Card attached:DevHitBreakPoint.Key="P"  x:Name="card" attached:ClassCardProperties.OpenCommand="{Binding OpenCommand}"  attached:ClassCardProperties.ExecuteOpenActionOnDoubleClick="true" Margin="0" d:LayoutOverrides="Width, Height" MinHeight="96" >
+                                <materialDesign:Card.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding RequireCompletionCommand}" CommandParameter="{StaticResource TrueBool }" Header="Complete all"/>
+                                        <MenuItem Command="{Binding RequireCompletionCommand}" CommandParameter="{StaticResource FalseBool }" Header="Reset all"/>
+
+                                        <MenuItem Command="{Binding RenameCommand}" Header="Rename"/>
+                                        <MenuItem Command="{Binding OpenPropertiesCommand}" Header="Properties"/>
+                                    </ContextMenu>
+                                </materialDesign:Card.ContextMenu>
                                 <Grid  d:LayoutOverrides="Width, Height, LeftPosition, RightPosition, TopPosition, BottomPosition" Margin="8,6" MinWidth="200">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -89,10 +102,12 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="22"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock x:Name="Titletb" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Title}" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,10,4" FontSize="14.667"/>
+                                    <TextBlock x:Name="Titletb"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Title}" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,10,4" FontSize="14.667" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityInverted}}"/>
+                                    <TextBox materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 2 0" x:Name="RenamingTB" attached:TextBoxProperties.InvokeLostFocusOrEnterCallback="True" attached:TextBoxProperties.IsAllSelected="{Binding IsRenaming}"   HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding RenamingName}" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,10,4" FontSize="14.667" Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
                                     <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"  Height="36" VerticalAlignment="Center" BorderBrush="#FF0872A4" Foreground="{Binding ProgressColor, Mode=OneWay}" Value="{Binding Prog.ProgressPercent, Mode=OneWay}" Width="36" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="0" Grid.RowSpan="3" Visibility="{Binding IsProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                                     <TextBlock x:Name="percent_tb"  TextWrapping="Wrap" Text="{Binding Prog.ProgressPercent, Mode=OneWay, StringFormat=\{0\}%}" Grid.Row="0" Foreground="{Binding ProgressColor, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" FontSize="10.667" Grid.RowSpan="3" Visibility="{Binding IsProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                    <materialDesign:PackIcon Kind="Done" Foreground="{Binding ProgressColor, Mode=OneWay}" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Height="32" Visibility="{Binding IsComplete, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                                    <materialDesign:PackIcon Kind="Done" Foreground="{Binding ProgressColor, Mode=OneWay}" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" Height="32" Visibility="{Binding IsDoneIconVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                                     <Grid  Grid.Row="1" HorizontalAlignment="Left">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -102,10 +117,10 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock  Margin="0,0,6,0" TextWrapping="Wrap" Text="Remaning:" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBlock  Margin="0,0.5" Grid.Row="1" TextWrapping="Wrap" Text="Tasks:" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding Remaining}" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" FontWeight="Bold" Foreground="{Binding ProgressColor, Mode=OneWay}"/>
-                                        <TextBlock  Grid.Row="1" TextWrapping="Wrap" Text="{Binding AllTasksCount}" FontSize="10.667" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Center"/>
+                                        <TextBlock  Margin="0,0,6,0" TextWrapping="Wrap" Text="Tasks:" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBlock  Margin="0,0,6,0" Grid.Row="1" TextWrapping="Wrap" Text="Completed:" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBlock  Grid.Row="1" Grid.Column="1" Text="{Binding AccomplishedTasksCount}" FontSize="10.667" HorizontalAlignment="Left" VerticalAlignment="Center"  FontWeight="Bold" Foreground="{Binding ProgressColor, Mode=OneWay}"/>
+                                        <TextBlock  Grid.Row="0" TextWrapping="Wrap" Text="{Binding AllTasksCount}" FontSize="10.667" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Center"/>
                                     </Grid>
                                     <TextBlock x:Name="dateTb"  TextWrapping="Wrap" Text="{Binding DeadlineDate, StringFormat=Deadline on \{0:g\}}" Grid.Row="2" FontSize="10.667" Foreground="{DynamicResource MaterialDesignToolTipBackground}" d:LayoutOverrides="Width" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 </Grid>
@@ -117,8 +132,14 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <Button x:Name="AddClassBtn" Command="{Binding CurrentSemesterViewModel.AddClassCommand}" Style="{DynamicResource MaterialDesignFloatingActionMiniDarkButton}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="1" Margin="0,0,22,20" >
+                <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" />
+            </Button>
+            <Button x:Name="DeleteSelectedClassBtn" Command="{Binding CurrentSemesterViewModel.DeleteSelectedClassesCommand}"  Style="{DynamicResource MaterialDesignFloatingActionMiniDarkButton}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="1" Foreground="{DynamicResource MaterialDesignPaper}" Margin="0,0,22,70" Background="#FFFF3B3B" CommandParameter="{Binding SelectedItems, ElementName=listBox1}" BorderBrush="#00707070" Visibility="{Binding SelectedItems.Count, Converter={StaticResource IntToVisibilityConverter}, ElementName=listBox1, Mode=OneWay}" >
+                <materialDesign:PackIcon Kind="Trash" Width="20" Height="20" />
+            </Button>
             <Separator Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Bottom"/>
-            <Grid x:Name="BOTTOM_PANNEL" Margin="4,4,10,4" Grid.Row="3" Grid.ColumnSpan="2">
+            <Grid x:Name="BOTTOM_PANNEL" Margin="4,4,10,4" Grid.Row="3" Grid.ColumnSpan="2" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="1*"/>
@@ -141,6 +162,7 @@
                 </Grid>
                 <StackPanel x:Name="SessionSect" Margin="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Button Command="{Binding LoadSemesterCommand}" Style="{StaticResource MaterialDesignOutlinedButton}"  Content="Load Session" HorizontalAlignment="Left" Margin="0"/>
+                    <Button Command="{Binding SaveSemesterCommand}" Style="{StaticResource MaterialDesignOutlinedButton}"  Content="Save Session" HorizontalAlignment="Left" Margin="0"/>
                 </StackPanel>
                 <StackPanel x:Name="SchemSect" Margin="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Style="{StaticResource MaterialDesignFlatButton}"  Content="Export shceme"/>

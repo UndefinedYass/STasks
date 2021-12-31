@@ -1,0 +1,32 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             
+             xmlns:oxyy="http://oxyplot.org/wpf"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:STasks.View"
+             xmlns:ViewModel="clr-namespace:STasks.ViewModel" xmlns:Converters="clr-namespace:Converters" x:Class="STasks.View.StatsView"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance {x:Type ViewModel:StatsViewModel}, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <Converters:BooleanToVisibilityInverted x:Key="BooleanToVisibilityInverted"/>
+    </UserControl.Resources>
+    <Grid>
+        <TabControl x:Name="tabControl" Margin="4">
+            <TabItem Header="Stats">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <oxyy:PlotView  Model="{Binding SinTestModel}" Height="160" />
+                    <TextBlock x:Name="textBlock2" HorizontalAlignment="Right" Margin="0,4,0,0" TextWrapping="Wrap" Text="{Binding DevCurrentWorkingDateTime, StringFormat=o}" VerticalAlignment="Top" />
+
+                    <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Margin="0,4,0,0" TextWrapping="Wrap" Text="Data not available" VerticalAlignment="Top" Visibility="{Binding IsDataAvailable, Converter={StaticResource BooleanToVisibilityInverted}}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>

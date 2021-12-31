@@ -29,7 +29,25 @@ SemesterDefinition: Name:s
 ClassDefinition: Name:s, DeadlineDate:dt, 
 SeriesDefinition: USI:s
 ExcerciseDefinition: ExcerciseIndex:i, CustomName:s
-Task: TaskIndex:i, CustomName:s
+Task: TaskIndex:i, CustomName:s, ID:guid
 
 some propes are optional some are not, and some are mutually optional, if an XMLscheme was made i'l make sure to define the rules there
 
+
+
+
+26-oct-2021 (not installing an op )
+well i did watch SG last episodes yesterdar, that kinda counts
+
+SO
+now that i Restructured my dom objeects, implemented the ProgressObject base class that works sde by sde with STDOMObject,, got the dataService to work as needed, basic semester saving and serializng, it's time for the progress data now
+ok the file will not only hold progress information but any future aditional data that is user specifc, from notes, completion dates, etc
+
+that said, the file name should be the STDoc filename appended with .stud.xml (first file extension preserved)
+STUD stands for user data
+
+the parsing and serializing will rely on .net core utils, 
+the class is STUserData, and it is semester-specific, it has a reference to one and only one semester name or id or hash
+class: STSemesterUserData
+   semester name:  referencing a semester name as in the semesterDefinition element, this is temporary unil adding a guid to the semester definition
+   dictionary: task guid to boolean completion state

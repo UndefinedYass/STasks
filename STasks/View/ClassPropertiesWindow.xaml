@@ -1,0 +1,86 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:STasks.View"
+        xmlns:attached="clr-namespace:STasks.View.Attached"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Custom="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:ViewModel="clr-namespace:STasks.ViewModel" 
+        xmlns:ViewModel1="clr-namespace:STasks.ViewModel" x:Class="STasks.View.ClassPropertiesWindow" 
+        mc:Ignorable="d"
+        Title="ClassPropertiesWindow" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" SizeToContent="Height" Width="415" d:DesignHeight="567" MinHeight="480" d:DataContext="{d:DesignInstance {x:Type ViewModel1:ClassCardViewModel}, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="251*"/>
+            <ColumnDefinition Width="145*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="TOP_PANNEL" Grid.ColumnSpan="2" Margin="6,4" Orientation="Vertical" Grid.IsSharedSizeScope="True">
+            <TextBlock Text="{Binding Title, Mode=OneWay}" Margin="0,0,0,10" FontSize="14.667"/>
+            <Grid Margin="0" Height="28">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="grp1"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Attached directory:" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding RefFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" materialDesign:ValidationAssist.OnlyShowOnFocus="True" VerticalAlignment="Center" Margin="6,0,0,0" Grid.Column="1"/>
+            </Grid>
+        </StackPanel>
+        <Grid Grid.ColumnSpan="2" Margin="6,0" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="28"/>
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="242*"/>
+                <ColumnDefinition Width="155*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel    Orientation="Horizontal" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
+                <TextBlock Text="Due Date:" VerticalAlignment="Center" Width="50"/>
+                <TextBox   Text="{Binding Interval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False, ValidatesOnDataErrors=True, ValidatesOnExceptions=False}" VerticalAlignment="Center" Margin="10,0,0,0" materialDesign:TextFieldAssist.LeadingIcon="Timer" materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIconSize="16" Visibility="Collapsed"/>
+                <DatePicker materialDesign:ValidationAssist.OnlyShowOnFocus="True" materialDesign:ValidationAssist.PopupPlacement="Right"   Margin="10 0 0 0"   SelectedDate="{Binding EditingDate, ValidatesOnDataErrors=True}"  TextOptions.TextFormattingMode="Display" Width="64" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0" Grid.Row="1" VerticalAlignment="Center">
+                <TextBlock Text="Color:" VerticalAlignment="Center" Width="50"/>
+                <materialDesign:ColorPicker Margin="0,0,0,-125" Visibility="Collapsed" Width="130"/>
+                <Grid Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Popup StaysOpen="False" x:Name="colorPickerPOPUP">
+                        <Grid Height="120" Width="100">
+                            <materialDesign:ColorPicker Color="{Binding Color, Mode=TwoWay}"/>
+                        </Grid>
+                    </Popup>
+                    <TextBox  FontFamily="Consolas" materialDesign:TextFieldAssist.TextBoxViewMargin="0 0 20 0"  Text="{Binding Color, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <materialDesign:PackIcon Kind="Circle" Foreground="{Binding ColorAsBrush, Mode=OneWay}" Width="14" Height="14" VerticalAlignment="Center" HorizontalAlignment="Right" Cursor="Hand"/>
+                </Grid>
+                <Border BorderBrush="White" Margin="10,0,0,0" Width="25" Height="16" VerticalAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" Background="Teal" Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="NotesSect" Margin="6,0,6,4" Grid.Row="2" Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <RichTextBox x:Name="richTextBox" Grid.Row="1" Margin="4,6">
+                <FlowDocument>
+                    <Paragraph>
+                        <Run Text="{Binding EditingNotes}"/>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+            <TextBlock Margin="0,4"><Run Text="Notes"/></TextBlock>
+        </Grid>
+        <StackPanel x:Name="CONTROLS" Margin="0,4,6,6" Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="OK" VerticalAlignment="Center" Command="{Binding SavePropertiesCommand, Mode=OneWay}" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{StaticResource MaterialDesignBody}"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource MaterialDesignBody}"  />
+        </StackPanel>
+    </Grid>
+</Window>

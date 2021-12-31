@@ -10,63 +10,71 @@ namespace STasks.Common
 {
     public class Mock
     {
-        public static Exercise dummyEx()
+        public static Exercise GetDummyExercise(string name ="Exercise",double completionBias=double.NaN)
         {
-            var SeriesModel = new Series(null);
-            var ex1 = new Exercise(SeriesModel);
-            var ex2 = new Exercise(SeriesModel);
+            Exercise ex = new Exercise();
+            int s_count = MathUtils.RandInt(1, 5);
+            for (int i = 0; i < s_count; i++)
+            {
+                TaskS t = new TaskS();
+                bool t_value = double.IsNaN(completionBias )? MathUtils.RndBool() : MathUtils.RndBasedBool(completionBias);
 
-            Model.TaskS t11 = new TaskS(ex1);
-            Model.TaskS t12 = new TaskS(ex1);
-            Model.TaskS t21 = new TaskS(ex2);
-            Model.TaskS t22 = new TaskS(ex2);
+                t.Name = "Task " + (i + 1).ToString();
+                ex.Tasks.Add(t);
+                t.Progress.RequireCompletion(t_value);
+            }
 
-            ex1.Tasks = new[] { t11, t12 };
-            ex2.Tasks = new[] { t21, t22 };
-            return ex1;
+            return ex;
             //SeriesModel.Exercises = new[] { ex1, ex2 };
         }
 
-        internal static Semester GetDummySemester(string n="dummy semester", DiscretProgress? Prog = null)
+        internal static Semester GetDummySemester(string n="dummy semester", double completionBias = double.NaN)
         {
             Semester s = new Semester();
             s.Name = n;
-            s.Progress = Prog.HasValue? Prog.Value : DiscretProgress.zero;
-            s.Classes = new[] {
-                GetDummyClass("Electro", s, new DiscretProgress(145,54)),
-                GetDummyClass("Magnetism",s, new DiscretProgress(266,266)),
-                GetDummyClass("Math",s, new DiscretProgress(118,0)),
-                GetDummyClass("Physique Quantique",s, new DiscretProgress(80,40)),
-                GetDummyClass("ELECTRONIQUE ANALOGIQUE",s, new DiscretProgress(11,11)),
+            
+            var clss = new[] {
+                GetDummyClass("Electro",1 ),
+                GetDummyClass("Magnetism",0.7),
+                GetDummyClass("Math",0.5),
+                GetDummyClass("Physique Quantique",0.1),
+                GetDummyClass("ELECTRONIQUE ANALOGIQUE",0.99),
             };
+            foreach (var item in clss)
+            {
+                s.Classes.Add(item);
+            }
             return s;
         }
 
-        internal static Class GetDummyClass(string name="dmmy", Semester class_par = null, DiscretProgress? Prog = null)
+        internal static Class GetDummyClass(string name="dmmy", double completionBias = double.NaN)
         {
-            Class cl = new Class(class_par);
+            Class cl = new Class();
             cl.Name = name;
-            cl.Progress = Prog.HasValue ? Prog.Value : DiscretProgress.zero;
-            cl.Series = new[] { GetDummySeries(1,cl), GetDummySeries(2,cl), GetDummySeries(3,cl) };
+
+            int srs_count = MathUtils.RandInt(2, 4);
+            for (int i = 0; i < srs_count; i++)
+            {
+                Series s = GetDummySeries(i + 1, completionBias);
+                cl.Series.Add(s);
+            }
             return cl;
         }
 
-        public static Series GetDummySeries(int ser_num = 3, Class class_par=null)
+        public static Series GetDummySeries(int ser_num = 3, double completionBias = double.NaN, string class_name="unk")
         {
-            var SeriesModel = new Series(class_par);
-            SeriesModel.Usi = new USI(class_par.Name, 2021, ser_num);
-            var ex1 = new Exercise(SeriesModel);
-            var ex2 = new Exercise(SeriesModel);
+            var s = new Series();
+            s.Usi = new USI(class_name, 2021, ser_num);
 
-            Model.TaskS t11 = new TaskS(ex1);
-            Model.TaskS t12 = new TaskS(ex1);
-            Model.TaskS t21 = new TaskS(ex2);
-            Model.TaskS t22 = new TaskS(ex2);
+            int exes_count = MathUtils.RandInt(3, 7);
+            for (int i = 0; i < exes_count; i++)
+            {
+                Exercise ex = GetDummyExercise($"Exercise {i + 1}", completionBias);
+                ex.Title = "Exercise " + (i + 1).ToString();
+                s.Exercises.Add(ex);//it was s.Exercises.Add(s); and i hit a stackoverflow that drove me nuts 24-oct-2021
+            }
 
-            ex1.Tasks = new[] { t11, t12 };
-            ex2.Tasks = new[] { t21, t22 };
-            SeriesModel.Exercises = new[] { ex1, ex2 };
-            return SeriesModel;
+            return s;
         }
     }
 }
